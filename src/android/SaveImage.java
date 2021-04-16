@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 
 import java.text.SimpleDateFormat;
@@ -17,10 +18,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.Manifest;
+import android.content.ContentResolver;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 
 /**
@@ -79,21 +84,54 @@ public class SaveImage extends CordovaPlugin {
         // create file from passed path
         File srcFile = new File(filePath);
 
-        // destination gallery folder - external storage
-        File dstGalleryFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        String title = "saved from app specific storage";
+        ContentResolver contentResolver = this.cordova.getContext().getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, title);
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, title);
+        values.put(MediaStore.Images.Media.DESCRIPTION, title);
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        // Add the date meta data to ensure the image is added at the front of the gallery
+        long millis = System.currentTimeMillis();
+        values.put(MediaStore.Images.Media.DATE_ADDED, millis / 1000L);
+        values.put(MediaStore.Images.Media.DATE_MODIFIED, millis / 1000L);
+        values.put(MediaStore.Images.Media.DATE_TAKEN, millis);
 
-        Log.d("SaveImage", "SaveImage dstGalleryFolder: " + dstGalleryFolder);
+        Uri fileUri = null;
 
         try {
-            // Create export file in destination folder (gallery)
-            File expFile = copyFile(srcFile, dstGalleryFolder);
+            fileUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
-            // Update image gallery
-            scanPhoto(expFile);
+            if (filePath != null) {
+                final int BUFFER_SIZE = 1024;
 
-            callbackContext.success(expFile.toString());
-        } catch (RuntimeException e) {
+                FileInputStream fileStream = new FileInputStream(filePath);
+                try {
+                    OutputStream imageOut = cr.openOutputStream(fileUri);
+                    try {
+                        byte[] buffer = new byte[BUFFER_SIZE];
+                        while (true) {
+                            int numBytesRead = fileStream.read(buffer);
+                            if (numBytesRead <= 0) {
+                                break;
+                            }
+                            imageOut.write(buffer, 0, numBytesRead);
+                        }
+                    } finally {
+                        imageOut.close();
+                    }
+                } finally {
+                    fileStream.close();
+                    callbackContext.success(fileUri.getPath());
+                }
+            } else {
+                cr.delete(url, null, null);
+            }
+        } catch (Exception e) {
             callbackContext.error("RuntimeException occurred: " + e.getMessage());
+            if (url != null) {
+                cr.delete(url, null, null);
+            }
         }
     }
 
