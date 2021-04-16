@@ -107,7 +107,7 @@ public class SaveImage extends CordovaPlugin {
 
                 FileInputStream fileStream = new FileInputStream(filePath);
                 try {
-                    OutputStream imageOut = cr.openOutputStream(fileUri);
+                    OutputStream imageOut = contentResolver.openOutputStream(fileUri);
                     try {
                         byte[] buffer = new byte[BUFFER_SIZE];
                         while (true) {
@@ -125,12 +125,12 @@ public class SaveImage extends CordovaPlugin {
                     callbackContext.success(fileUri.getPath());
                 }
             } else {
-                cr.delete(url, null, null);
+                contentResolver.delete(url, null, null);
             }
         } catch (Exception e) {
             callbackContext.error("RuntimeException occurred: " + e.getMessage());
             if (url != null) {
-                cr.delete(url, null, null);
+                contentResolver.delete(url, null, null);
             }
         }
     }
