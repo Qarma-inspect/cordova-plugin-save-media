@@ -125,12 +125,12 @@ public class SaveImage extends CordovaPlugin {
                     callbackContext.success(fileUri.getPath());
                 }
             } else {
-                contentResolver.delete(url, null, null);
+                contentResolver.delete(fileUri, null, null);
             }
         } catch (Exception e) {
             callbackContext.error("RuntimeException occurred: " + e.getMessage());
-            if (url != null) {
-                contentResolver.delete(url, null, null);
+            if (fileUri != null) {
+                contentResolver.delete(fileUri, null, null);
             }
         }
     }
