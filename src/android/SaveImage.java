@@ -32,17 +32,23 @@ import android.util.Log;
  * The SaveImage class offers a method saving an image to the devices' media gallery.
  */
 public class SaveImage extends CordovaPlugin {
-    public static final int WRITE_PERM_REQUEST_CODE = 1;
-    private final String ACTION = "saveImageToGallery";
+    public static final int WRITE_IMAGE_PERM_REQUEST_CODE = 1;
+    public static final int WRITE_VIDEO_PERM_REQUEST_CODE = 2;
+    private final String IMAGE_ACTION = "saveImageToGallery";
+    private final String VIDEO_ACTION = "saveVideoToGallery";
     private final String WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     private CallbackContext callbackContext;
-    private String filePath;
+    private String imageFilePath;
+    private String videoFilePath;
     
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        if (action.equals(ACTION)) {
+        if (action.equals(IMAGE_ACTION)) {
             saveImageToGallery(args, callbackContext);
+            return true;
+        } else if(action.equals(VIDEO_ACTION)) {
+            saveVideoToGallery(args, callbackContext);
             return true;
         } else {
             return false;
@@ -58,11 +64,11 @@ public class SaveImage extends CordovaPlugin {
      * args[0] filePath         file path string to image file to be saved to gallery
      */  
     private void saveImageToGallery(JSONArray args, CallbackContext callback) throws JSONException {
-    	this.filePath = args.getString(0);
+    	this.imageFilePath = args.getString(0);
     	this.callbackContext = callback;
-        Log.d("SaveImage", "SaveImage in filePath: " + filePath);
+        Log.d("SaveImage", "SaveImage in filePath: " + imageFilePath);
         
-        if (filePath == null || filePath.equals("")) {
+        if (imageFilePath == null || imageFilePath.equals("")) {
         	callback.error("Missing filePath");
             return;
         }
@@ -72,18 +78,42 @@ public class SaveImage extends CordovaPlugin {
         	performImageSave();
         } else {
         	Log.d("SaveImage", "Requesting permissions for WRITE_EXTERNAL_STORAGE");
-        	PermissionHelper.requestPermission(this, WRITE_PERM_REQUEST_CODE, WRITE_EXTERNAL_STORAGE);
+        	PermissionHelper.requestPermission(this, WRITE_IMAGE_PERM_REQUEST_CODE, WRITE_EXTERNAL_STORAGE);
         }      
     }
-    
+
+    /**
+     * Check saveVideo arguments and app permissions
+     *
+     * @param args              JSON Array of args
+     * @param callbackContext   callback id for optional progress reports
+     *
+     * args[0] filePath         file path string to image file to be saved to gallery
+     */  
+    private void saveVideoToGallery(JSONArray args, CallbackContext callback) throws JSONException {
+    	this.videoFilePath = args.getString(0);
+    	this.callbackContext = callback;
+        Log.d("SaveImage", "SaveImage in filePath: " + videoFilePath);
+        
+        if (videoFilePath == null || videoFilePath.equals("")) {
+        	callback.error("Missing filePath");
+            return;
+        }
+        
+        if (PermissionHelper.hasPermission(this, WRITE_EXTERNAL_STORAGE)) {
+        	Log.d("SaveImage", "Permissions already granted, or Android version is lower than 6");
+        	performVideoSave();
+        } else {
+        	Log.d("SaveImage", "Requesting permissions for WRITE_EXTERNAL_STORAGE");
+        	PermissionHelper.requestPermission(this, WRITE_IMAGE_PERM_REQUEST_CODE, WRITE_EXTERNAL_STORAGE);
+        }      
+    }
     
     /**
      * Save image to device gallery
      */
     private void performImageSave() throws JSONException {
         // create file from passed path
-        File srcFile = new File(filePath);
-
         String title = "saved from app specific storage";
         ContentResolver contentResolver = this.cordova.getContext().getContentResolver();
         ContentValues values = new ContentValues();
@@ -102,10 +132,10 @@ public class SaveImage extends CordovaPlugin {
         try {
             fileUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
-            if (filePath != null) {
+            if (imageFilePath != null) {
                 final int BUFFER_SIZE = 1024;
 
-                FileInputStream fileStream = new FileInputStream(filePath);
+                FileInputStream fileStream = new FileInputStream(imageFilePath);
                 try {
                     OutputStream imageOut = contentResolver.openOutputStream(fileUri);
                     try {
@@ -136,79 +166,60 @@ public class SaveImage extends CordovaPlugin {
     }
 
     /**
-     * Copy a file to a destination folder
-     *
-     * @param srcFile       Source file to be stored in destination folder
-     * @param dstFolder     Destination folder where to store file
-     * @return File         The newly generated file in destination folder
+     * Save image to device gallery
      */
-    private File copyFile(File srcFile, File dstFolder) {
-        // if destination folder does not exist, create it
-        if (!dstFolder.exists()) {
-            if (!dstFolder.mkdir()) {
-                throw new RuntimeException("Destination folder does not exist and cannot be created.");
-            }
-        }
+    private void performVideoSave() throws JSONException {
+        // create file from passed path
+        String title = "saved from app specific storage";
+        ContentResolver contentResolver = this.cordova.getContext().getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Video.Media.TITLE, title);
+        values.put(MediaStore.Video.Media.DISPLAY_NAME, title);
+        values.put(MediaStore.Video.Media.DESCRIPTION, title);
+        // Add the date meta data to ensure the image is added at the front of the gallery
+        long millis = System.currentTimeMillis();
+        values.put(MediaStore.Video.Media.DATE_ADDED, millis / 1000L);
+        values.put(MediaStore.Video.Media.DATE_MODIFIED, millis / 1000L);
+        values.put(MediaStore.Video.Media.DATE_TAKEN, millis);
 
-        // Generate image file name using current date and time
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmssSSS").format(new Date());
-        File newFile = new File(dstFolder.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
-
-        // Read and write image files
-        FileChannel inChannel = null;
-        FileChannel outChannel = null;
-
-        try {
-            inChannel = new FileInputStream(srcFile).getChannel();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Source file not found: " + srcFile + ", error: " + e.getMessage());
-        }
-        try {
-            outChannel = new FileOutputStream(newFile).getChannel();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Copy file not found: " + newFile + ", error: " + e.getMessage());
-        }
+        Uri fileUri = null;
 
         try {
-            inChannel.transferTo(0, inChannel.size(), outChannel);
-        } catch (IOException e) {
-            throw new RuntimeException("Error transfering file, error: " + e.getMessage());
-        } finally {
-            if (inChannel != null) {
+            fileUri = contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
+
+            if (videoFilePath != null) {
+                final int BUFFER_SIZE = 1024;
+
+                FileInputStream fileStream = new FileInputStream(videoFilePath);
                 try {
-                    inChannel.close();
-                } catch (IOException e) {
-                    Log.d("SaveImage", "Error closing input file channel: " + e.getMessage());
-                    // does not harm, do nothing
+                    OutputStream imageOut = contentResolver.openOutputStream(fileUri);
+                    try {
+                        byte[] buffer = new byte[BUFFER_SIZE];
+                        while (true) {
+                            int numBytesRead = fileStream.read(buffer);
+                            if (numBytesRead <= 0) {
+                                break;
+                            }
+                            imageOut.write(buffer, 0, numBytesRead);
+                        }
+                    } finally {
+                        imageOut.close();
+                    }
+                } finally {
+                    fileStream.close();
+                    callbackContext.success(fileUri.getPath());
                 }
+            } else {
+                contentResolver.delete(fileUri, null, null);
             }
-            if (outChannel != null) {
-                try {
-                    outChannel.close();
-                } catch (IOException e) {
-                    Log.d("SaveImage", "Error closing output file channel: " + e.getMessage());
-                    // does not harm, do nothing
-                }
+        } catch (Exception e) {
+            callbackContext.error("RuntimeException occurred: " + e.getMessage());
+            if (fileUri != null) {
+                contentResolver.delete(fileUri, null, null);
             }
         }
-
-        return newFile;
-    }
-
-    /**
-     * Invoke the system's media scanner to add your photo to the Media Provider's database,
-     * making it available in the Android Gallery application and to other apps.
-     *
-     * @param imageFile The image file to be scanned by the media scanner
-     */
-    private void scanPhoto(File imageFile) {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        Uri contentUri = Uri.fromFile(imageFile);
-        mediaScanIntent.setData(contentUri);
-        cordova.getActivity().sendBroadcast(mediaScanIntent);
     }
     
-
     /**
      * Callback from PermissionHelper.requestPermission method
      */
@@ -222,10 +233,14 @@ public class SaveImage extends CordovaPlugin {
 		}
 		
 		switch (requestCode) {
-		case WRITE_PERM_REQUEST_CODE:
-			Log.d("SaveImage", "User granted the permission for WRITE_EXTERNAL_STORAGE");
-			performImageSave();
-			break;
-		}
-	}
+            case WRITE_IMAGE_PERM_REQUEST_CODE:
+                Log.d("SaveImage", "User granted the permission for WRITE_EXTERNAL_STORAGE");
+                performImageSave();
+                break;
+            case WRITE_VIDEO_PERM_REQUEST_CODE:
+                Log.d("SaveImage", "User granted the permission for WRITE_EXTERNAL_STORAGE");
+                performVideoSave();
+                break;
+        }
+    }
 }
