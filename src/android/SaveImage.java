@@ -114,12 +114,12 @@ public class SaveImage extends CordovaPlugin {
      */
     private void performImageSave() throws JSONException {
         // create file from passed path
-        String title = "saved from app specific storage";
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
         ContentResolver contentResolver = this.cordova.getContext().getContentResolver();
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, title);
-        values.put(MediaStore.Images.Media.DISPLAY_NAME, title);
-        values.put(MediaStore.Images.Media.DESCRIPTION, title);
+        values.put(MediaStore.Images.Media.TITLE, timeStamp);
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, timeStamp);
+        values.put(MediaStore.Images.Media.DESCRIPTION, timeStamp);
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
         // Add the date meta data to ensure the image is added at the front of the gallery
         long millis = System.currentTimeMillis();
@@ -170,12 +170,12 @@ public class SaveImage extends CordovaPlugin {
      */
     private void performVideoSave() throws JSONException {
         // create file from passed path
-        String title = "saved from app specific storage";
+        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
         ContentResolver contentResolver = this.cordova.getContext().getContentResolver();
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Video.Media.TITLE, title);
-        values.put(MediaStore.Video.Media.DISPLAY_NAME, title);
-        values.put(MediaStore.Video.Media.DESCRIPTION, title);
+        values.put(MediaStore.Video.Media.TITLE, timeStamp);
+        values.put(MediaStore.Video.Media.DISPLAY_NAME, timeStamp);
+        values.put(MediaStore.Video.Media.DESCRIPTION, timeStamp);
         // Add the date meta data to ensure the image is added at the front of the gallery
         long millis = System.currentTimeMillis();
         values.put(MediaStore.Video.Media.DATE_ADDED, millis / 1000L);
