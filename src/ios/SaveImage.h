@@ -7,5 +7,6 @@
 @property (nonatomic, copy) NSString* callbackId;
 
 - (void)saveImageToGallery:(CDVInvokedUrlCommand*)command;
+- (void)saveVideoToGallery:(CDVInvokedUrlCommand*)command;
 
 @end
