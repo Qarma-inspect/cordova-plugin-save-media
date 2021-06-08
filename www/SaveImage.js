@@ -1,7 +1,4 @@
-var ImageSaver = function () {
-};
-
-ImageSaver.saveImageToGallery = function (localImagePath, successCallback, failureCallback) {
+exports.saveImageToGallery = function (localImagePath, successCallback, failureCallback) {
     if (typeof successCallback != 'function') {
         throw new Error('SaveImage Error: successCallback is not a function');
     }
@@ -21,7 +18,7 @@ ImageSaver.saveImageToGallery = function (localImagePath, successCallback, failu
     }
 };
 
-ImageSaver.saveVideoToGallery = function (localVideoPath, successCallback, failureCallback) {
+exports.saveVideoToGallery = function (localVideoPath, successCallback, failureCallback) {
     if (typeof successCallback != 'function') {
         throw new Error('SaveImage Error: successCallback is not a function');
     }
@@ -40,5 +37,3 @@ ImageSaver.saveVideoToGallery = function (localVideoPath, successCallback, failu
         return localVideoPath;
     }
 };
-
-module.exports = ImageSaver;

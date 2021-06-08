@@ -6,17 +6,17 @@
     <name>SaveImage</name>
     <description>This plugin allows you to save an image to the iOS Camera roll / Photo Library or Android Gallery.</description>
     <license>MIT</license>
-    <author>Quiply Technologies GmbH - hello@quiply.com</author>
+    <author>Qarma Inspect</author>
     <keywords>image,photo library,camera roll,gallery,image gallery</keywords>
-    <repo>https://github.com/LightMind/cordova-plugin-save-image</repo>
-    <issue>https://github.com/LightMind/cordova-plugin-save-image/issues</issue>
+    <repo>https://github.com/Qarma-inspect/cordova-plugin-save-media</repo>
+    <issue>https://github.com/Qarma-inspect/cordova-plugin-save-media/issues</issue>
 
     <engines>
         <engine name="cordova-android" version=">=6.3.0"/>
     </engines>
 
     <js-module src="www/SaveImage.js" name="SaveImage">
-        <clobbers target="cordova.plugins.imagesaver"/>
+        <clobbers target="navigator.device.imagesaver" />
     </js-module>
 
     <!-- android -->
@@ -26,7 +26,7 @@
         </config-file>
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="SaveImage">
-                <param name="android-package" value="com.quiply.cordova.saveimage.SaveImage"/>
+                <param name="android-package" value="com.qarma.cordova.SaveImage"/>
             </feature>
         </config-file>
 
