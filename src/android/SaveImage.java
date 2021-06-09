@@ -1,4 +1,4 @@
-package com.quiply.cordova.saveimage;
+package com.qarma.cordova;
 
 import java.io.File;
 import java.io.FileInputStream;

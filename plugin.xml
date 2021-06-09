@@ -30,7 +30,7 @@
             </feature>
         </config-file>
 
-        <source-file src="src/android/SaveImage.java" target-dir="src/com/quiply/cordova/saveimage"/>
+        <source-file src="src/android/SaveImage.java" target-dir="src/com/qarma/cordova"/>
     </platform>
 
     <!-- ios -->
