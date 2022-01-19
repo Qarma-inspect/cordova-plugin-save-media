@@ -181,6 +181,8 @@ public class SaveImage extends CordovaPlugin {
         values.put(MediaStore.Video.Media.DATE_ADDED, millis / 1000L);
         values.put(MediaStore.Video.Media.DATE_MODIFIED, millis / 1000L);
         values.put(MediaStore.Video.Media.DATE_TAKEN, millis);
+        
+        values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
 
         Uri fileUri = null;
 
