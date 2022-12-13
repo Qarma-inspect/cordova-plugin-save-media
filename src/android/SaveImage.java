@@ -39,7 +39,10 @@ public class SaveImage extends CordovaPlugin {
     private final String WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     private CallbackContext callbackContext;
     private String imageFilePath;
+    private String imageTitle;
     private String videoFilePath;
+    private String videoTitle;
+
     
 
     @Override
@@ -65,6 +68,7 @@ public class SaveImage extends CordovaPlugin {
      */  
     private void saveImageToGallery(JSONArray args, CallbackContext callback) throws JSONException {
     	this.imageFilePath = args.getString(0);
+        this.imageTitle = args.getString(1);
     	this.callbackContext = callback;
         Log.d("SaveImage", "SaveImage in filePath: " + imageFilePath);
         
@@ -92,6 +96,7 @@ public class SaveImage extends CordovaPlugin {
      */  
     private void saveVideoToGallery(JSONArray args, CallbackContext callback) throws JSONException {
     	this.videoFilePath = args.getString(0);
+        this.videoTitle = args.getString(1);
     	this.callbackContext = callback;
         Log.d("SaveImage", "SaveImage in filePath: " + videoFilePath);
         
@@ -114,12 +119,12 @@ public class SaveImage extends CordovaPlugin {
      */
     private void performImageSave() throws JSONException {
         // create file from passed path
-        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
         ContentResolver contentResolver = this.cordova.getContext().getContentResolver();
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, timeStamp);
-        values.put(MediaStore.Images.Media.DISPLAY_NAME, timeStamp);
-        values.put(MediaStore.Images.Media.DESCRIPTION, timeStamp);
+        String fileName = this.imageTitle;
+        values.put(MediaStore.Images.Media.TITLE, fileName);
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
+        values.put(MediaStore.Images.Media.DESCRIPTION, fileName);
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
         // Add the date meta data to ensure the image is added at the front of the gallery
         long millis = System.currentTimeMillis();
@@ -169,13 +174,11 @@ public class SaveImage extends CordovaPlugin {
      * Save image to device gallery
      */
     private void performVideoSave() throws JSONException {
-        // create file from passed path
-        String timeStamp = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
         ContentResolver contentResolver = this.cordova.getContext().getContentResolver();
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Video.Media.TITLE, timeStamp);
-        values.put(MediaStore.Video.Media.DISPLAY_NAME, timeStamp);
-        values.put(MediaStore.Video.Media.DESCRIPTION, timeStamp);
+        values.put(MediaStore.Video.Media.TITLE, this.videoTitle);
+        values.put(MediaStore.Video.Media.DISPLAY_NAME, this.videoTitle);
+        values.put(MediaStore.Video.Media.DESCRIPTION, this.videoTitle);
         // Add the date meta data to ensure the image is added at the front of the gallery
         long millis = System.currentTimeMillis();
         values.put(MediaStore.Video.Media.DATE_ADDED, millis / 1000L);

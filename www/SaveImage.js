@@ -1,4 +1,4 @@
-exports.saveImageToGallery = function (localImagePath, successCallback, failureCallback) {
+exports.saveImageToGallery = function (localImagePath, title, successCallback, failureCallback) {
     if (typeof successCallback != 'function') {
         throw new Error('SaveImage Error: successCallback is not a function');
     }
@@ -8,7 +8,7 @@ exports.saveImageToGallery = function (localImagePath, successCallback, failureC
     }
 
     return cordova.exec(
-        successCallback, failureCallback, 'SaveImage', 'saveImageToGallery', [_getLocalImagePathWithoutPrefix()]);
+        successCallback, failureCallback, 'SaveImage', 'saveImageToGallery', [_getLocalImagePathWithoutPrefix(), title]);
 
     function _getLocalImagePathWithoutPrefix() {
         if (localImagePath.indexOf('file:///') === 0) {
@@ -18,7 +18,7 @@ exports.saveImageToGallery = function (localImagePath, successCallback, failureC
     }
 };
 
-exports.saveVideoToGallery = function (localVideoPath, successCallback, failureCallback) {
+exports.saveVideoToGallery = function (localVideoPath, title, successCallback, failureCallback) {
     if (typeof successCallback != 'function') {
         throw new Error('SaveImage Error: successCallback is not a function');
     }
@@ -28,7 +28,7 @@ exports.saveVideoToGallery = function (localVideoPath, successCallback, failureC
     }
 
     return cordova.exec(
-        successCallback, failureCallback, 'SaveImage', 'saveVideoToGallery', [_getLocalImagePathWithoutPrefix()]);
+        successCallback, failureCallback, 'SaveImage', 'saveVideoToGallery', [_getLocalImagePathWithoutPrefix(), title]);
 
     function _getLocalImagePathWithoutPrefix() {
         if (localVideoPath.indexOf('file:///') === 0) {
