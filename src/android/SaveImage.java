@@ -58,42 +58,21 @@ public class SaveImage extends CordovaPlugin {
         }
     }
 
-    /**
-     * Check saveImage arguments and app permissions
-     *
-     * @param args              JSON Array of args
-     * @param callbackContext   callback id for optional progress reports
-     *
-     * args[0] filePath         file path string to image file to be saved to gallery
-     */  
     private void saveImageToGallery(JSONArray args, CallbackContext callback) throws JSONException {
-    	this.imageFilePath = args.getString(0);
-        this.imageTitle = args.getString(1);
-    	this.callbackContext = callback;
-        Log.d("SaveImage", "SaveImage in filePath: " + imageFilePath);
-        
-        if (imageFilePath == null || imageFilePath.equals("")) {
-        	callback.error("Missing filePath");
-            return;
-        }
-        
-        if (PermissionHelper.hasPermission(this, WRITE_EXTERNAL_STORAGE)) {
-        	Log.d("SaveImage", "Permissions already granted, or Android version is lower than 6");
-        	performImageSave();
-        } else {
-        	Log.d("SaveImage", "Requesting permissions for WRITE_EXTERNAL_STORAGE");
-        	PermissionHelper.requestPermission(this, WRITE_IMAGE_PERM_REQUEST_CODE, WRITE_EXTERNAL_STORAGE);
-        }      
-    }
+    	String imageFilePath = args.getString(0);
+        String imageTitle = args.getString(1);
 
-    /**
-     * Check saveVideo arguments and app permissions
-     *
-     * @param args              JSON Array of args
-     * @param callbackContext   callback id for optional progress reports
-     *
-     * args[0] filePath         file path string to image file to be saved to gallery
-     */  
+        if (imageFilePath == null || imageFilePath.equals("")) {
+            callbackContext.error("Missing filePath");
+        }
+        try {
+            MediaStore.Images.Media.insertImage(cordova.getContext().getContentResolver(), imageFilePath, imageTitle, "");
+            callbackContext.success(imageFilePath);
+        } catch (IOException e) {
+            callbackContext.error(e.getMessage());
+        }     
+    }
+ 
     private void saveVideoToGallery(JSONArray args, CallbackContext callback) throws JSONException {
     	this.videoFilePath = args.getString(0);
         this.videoTitle = args.getString(1);
@@ -114,65 +93,6 @@ public class SaveImage extends CordovaPlugin {
         }      
     }
     
-    /**
-     * Save image to device gallery
-     */
-    private void performImageSave() throws JSONException {
-        // create file from passed path
-        ContentResolver contentResolver = this.cordova.getContext().getContentResolver();
-        ContentValues values = new ContentValues();
-        String fileName = this.imageTitle;
-        values.put(MediaStore.Images.Media.TITLE, fileName);
-        values.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
-        values.put(MediaStore.Images.Media.DESCRIPTION, fileName);
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-        // Add the date meta data to ensure the image is added at the front of the gallery
-        long millis = System.currentTimeMillis();
-        values.put(MediaStore.Images.Media.DATE_ADDED, millis / 1000L);
-        values.put(MediaStore.Images.Media.DATE_MODIFIED, millis / 1000L);
-        values.put(MediaStore.Images.Media.DATE_TAKEN, millis);
-
-        Uri fileUri = null;
-
-        try {
-            fileUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-            if (imageFilePath != null) {
-                final int BUFFER_SIZE = 1024;
-
-                FileInputStream fileStream = new FileInputStream(imageFilePath);
-                try {
-                    OutputStream imageOut = contentResolver.openOutputStream(fileUri);
-                    try {
-                        byte[] buffer = new byte[BUFFER_SIZE];
-                        while (true) {
-                            int numBytesRead = fileStream.read(buffer);
-                            if (numBytesRead <= 0) {
-                                break;
-                            }
-                            imageOut.write(buffer, 0, numBytesRead);
-                        }
-                    } finally {
-                        imageOut.close();
-                    }
-                } finally {
-                    fileStream.close();
-                    callbackContext.success(fileUri.getPath());
-                }
-            } else {
-                contentResolver.delete(fileUri, null, null);
-            }
-        } catch (Exception e) {
-            callbackContext.error("RuntimeException occurred: " + e.getMessage());
-            if (fileUri != null) {
-                contentResolver.delete(fileUri, null, null);
-            }
-        }
-    }
-
-    /**
-     * Save image to device gallery
-     */
     private void performVideoSave() throws JSONException {
         ContentResolver contentResolver = this.cordova.getContext().getContentResolver();
         ContentValues values = new ContentValues();
