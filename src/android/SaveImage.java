@@ -1,15 +1,8 @@
 package com.qarma.cordova;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.channels.FileChannel;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -19,11 +12,8 @@ import org.json.JSONException;
 
 import android.Manifest;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -38,12 +28,8 @@ public class SaveImage extends CordovaPlugin {
     private final String VIDEO_ACTION = "saveVideoToGallery";
     private final String WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     private CallbackContext callbackContext;
-    private String imageFilePath;
-    private String imageTitle;
     private String videoFilePath;
     private String videoTitle;
-
-    
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -57,7 +43,6 @@ public class SaveImage extends CordovaPlugin {
             return false;
         }
     }
-
     private void saveImageToGallery(JSONArray args, CallbackContext callback) throws JSONException {
     	String imageFilePath = args.getString(0);
         String imageTitle = args.getString(1);
@@ -70,29 +55,29 @@ public class SaveImage extends CordovaPlugin {
             callbackContext.success(imageFilePath);
         } catch (IOException e) {
             callbackContext.error(e.getMessage());
-        }     
+        }
     }
- 
+
     private void saveVideoToGallery(JSONArray args, CallbackContext callback) throws JSONException {
     	this.videoFilePath = args.getString(0);
         this.videoTitle = args.getString(1);
     	this.callbackContext = callback;
         Log.d("SaveImage", "SaveImage in filePath: " + videoFilePath);
-        
+
         if (videoFilePath == null || videoFilePath.equals("")) {
         	callback.error("Missing filePath");
             return;
         }
-        
+
         if (PermissionHelper.hasPermission(this, WRITE_EXTERNAL_STORAGE)) {
         	Log.d("SaveImage", "Permissions already granted, or Android version is lower than 6");
         	performVideoSave();
         } else {
         	Log.d("SaveImage", "Requesting permissions for WRITE_EXTERNAL_STORAGE");
         	PermissionHelper.requestPermission(this, WRITE_IMAGE_PERM_REQUEST_CODE, WRITE_EXTERNAL_STORAGE);
-        }      
+        }
     }
-    
+
     private void performVideoSave() throws JSONException {
         ContentResolver contentResolver = this.cordova.getContext().getContentResolver();
         ContentValues values = new ContentValues();
@@ -104,7 +89,7 @@ public class SaveImage extends CordovaPlugin {
         values.put(MediaStore.Video.Media.DATE_ADDED, millis / 1000L);
         values.put(MediaStore.Video.Media.DATE_MODIFIED, millis / 1000L);
         values.put(MediaStore.Video.Media.DATE_TAKEN, millis);
-        
+
         values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
 
         Uri fileUri = null;
@@ -144,7 +129,7 @@ public class SaveImage extends CordovaPlugin {
             }
         }
     }
-    
+
     /**
      * Callback from PermissionHelper.requestPermission method
      */
@@ -156,12 +141,8 @@ public class SaveImage extends CordovaPlugin {
 				return;
 			}
 		}
-		
+
 		switch (requestCode) {
-            case WRITE_IMAGE_PERM_REQUEST_CODE:
-                Log.d("SaveImage", "User granted the permission for WRITE_EXTERNAL_STORAGE");
-                performImageSave();
-                break;
             case WRITE_VIDEO_PERM_REQUEST_CODE:
                 Log.d("SaveImage", "User granted the permission for WRITE_EXTERNAL_STORAGE");
                 performVideoSave();
