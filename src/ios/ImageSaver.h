@@ -1,6 +1,6 @@
 #import <Cordova/CDVPlugin.h>
 
-@interface SaveImage : CDVPlugin {
+@interface ImageSaver : CDVPlugin {
 	NSString* callbackId;
 }
 

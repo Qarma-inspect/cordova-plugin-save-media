@@ -1,7 +1,7 @@
-#import "SaveImage.h"
+#import "ImageSaver.h"
 #import <Cordova/CDV.h>
 
-@implementation SaveImage
+@implementation ImageSaver
 @synthesize callbackId;
 
 - (void)saveImageToGallery:(CDVInvokedUrlCommand*)command {
