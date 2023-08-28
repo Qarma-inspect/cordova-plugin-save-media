@@ -1,4 +1,4 @@
-SaveImage
+SaveMedia
 ======
 
 This plugin allows you to save local JPEG image files to the iOS Camera Roll/Photo Library or Android Gallery. Other image mime types are currently not supported.
@@ -6,13 +6,8 @@ The image file to be saved to the Library/Gallery must be available on the devic
 
 The plugin is based on code seen in several other existing plugins:
 
-1. Canvas2ImagePlugin (https://github.com/devgeeks/Canvas2ImagePlugin) by Tommy-Carlos Williams (https://github.com/devgeeks)
-2. ImgDownloader (https://github.com/Nomia/ImgDownloader) by "Nomia" (https://github.com/Nomia)
-3. cordova-camera-roll (https://github.com/driftyco/cordova-camera-roll) by Max Lynch (https://github.com/mlynch)
 
-Thanks to all of the above mentioned authors for sharing their code openly.
-
-    cordova plugin add cordova-plugin-save-image
+    cordova plugin add cordova-plugin-save-media
 
 Methods
 -------
