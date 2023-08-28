@@ -1,24 +1,24 @@
 {
-  "_from": "git+https://github.com/LightMind/cordova-plugin-save-image.git",
-  "_id": "cordova-plugin-save-image@0.3.0",
+  "_from": "git+https://github.com/Qarma-inspect/cordova-plugin-save-media.git",
+  "_id": "cordova-plugin-save-media@0.3.0",
   "_inBundle": false,
   "_integrity": "",
   "_location": "/cordova-plugin-save-image",
   "_phantomChildren": {},
   "_requested": {
     "type": "git",
-    "raw": "git+https://github.com/LightMind/cordova-plugin-save-image.git",
-    "rawSpec": "git+https://github.com/LightMind/cordova-plugin-save-image.git",
-    "saveSpec": "git+https://github.com/LightMind/cordova-plugin-save-image.git",
-    "fetchSpec": "https://github.com/LightMind/cordova-plugin-save-image.git",
+    "raw": "git+https://github.com/Qarma-inspect/cordova-plugin-save-media.git",
+    "rawSpec": "git+https://github.com/Qarma-inspect/cordova-plugin-save-media.git",
+    "saveSpec": "git+https://github.com/Qarma-inspect/cordova-plugin-save-media.git",
+    "fetchSpec": "https://github.com/Qarma-inspect/cordova-plugin-save-media.git",
     "gitCommittish": null
   },
   "_requiredBy": [
     "#DEV:/",
     "#USER"
   ],
-  "_resolved": "git+https://github.com/LightMind/cordova-plugin-save-image.git#b4ae2df1a94ce77994edfd561d22aed7caa962f1",
-  "_spec": "git+https://github.com/LightMind/cordova-plugin-save-image.git",
+  "_resolved": "git+https://github.com/Qarma-inspect/cordova-plugin-save-media.git#b4ae2df1a94ce77994edfd561d22aed7caa962f1",
+  "_spec": "git+https://github.com/Qarma-inspect/cordova-plugin-save-media.git",
   "_where": "/Users/chriskhong/Documents/Qarma/mobile-app",
   "author": {
     "name": "Quiply Technologies GmbH",
@@ -26,7 +26,7 @@
     "url": "http://www.quiply.com"
   },
   "bugs": {
-    "url": "https://github.com/LightMind/cordova-plugin-save-image/issues"
+    "url": "https://github.com/Qarma-inspect/cordova-plugin-save-media/issues"
   },
   "bundleDependencies": false,
   "cordova": {
@@ -48,8 +48,8 @@
       }
     }
   },
-  "homepage": "https://github.com/LightMind/cordova-plugin-save-image#readme",
-  "issue": "https://github.com/LightMind/cordova-plugin-save-image/issues",
+  "homepage": "https://github.com/Qarma-inspect/cordova-plugin-save-media#readme",
+  "issue": "https://github.com/Qarma-inspect/cordova-plugin-save-media/issues",
   "keywords": [
     "image",
     "photo library",
@@ -64,7 +64,7 @@
   "name": "cordova-plugin-save-image",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LightMind/cordova-plugin-save-image.git"
+    "url": "git+https://github.com/Qarma-inspect/cordova-plugin-save-media.git"
   },
   "version": "0.3.0"
 }
