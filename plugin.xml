@@ -25,25 +25,25 @@
             <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
         </config-file>
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="SaveImage">
-                <param name="android-package" value="com.qarma.cordova.SaveImage"/>
+            <feature name="ImageSaver">
+                <param name="android-package" value="com.qarma.cordova.ImageSaver"/>
             </feature>
         </config-file>
 
-        <source-file src="src/android/SaveImage.java" target-dir="src/com/qarma/cordova"/>
+        <source-file src="src/android/ImageSaver.java" target-dir="src/com/qarma/cordova"/>
     </platform>
 
     <!-- ios -->
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
-            <feature name="SaveImage">
-                <param name="ios-package" value="SaveImage"/>
+            <feature name="ImageSaver">
+                <param name="ios-package" value="ImageSaver"/>
                 <param name="onload" value="true"/>
             </feature>
         </config-file>
 
-        <header-file src="src/ios/SaveImage.h"/>
-        <source-file src="src/ios/SaveImage.m" compiler-flags="-fno-objc-arc"/>
+        <header-file src="src/ios/ImageSaver.h"/>
+        <source-file src="src/ios/ImageSaver.m" compiler-flags="-fno-objc-arc"/>
     </platform>
 
 </plugin>
