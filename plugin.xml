@@ -3,7 +3,7 @@
         id="cordova-plugin-save-image"
         version="0.3.0">
 
-    <name>SaveImage</name>
+    <name>ImageSaver</name>
     <description>This plugin allows you to save an image to the iOS Camera roll / Photo Library or Android Gallery.</description>
     <license>MIT</license>
     <author>Qarma Inspect</author>
